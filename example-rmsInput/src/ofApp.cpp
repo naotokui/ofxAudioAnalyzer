@@ -5,7 +5,7 @@ void ofApp::setup(){
     ofBackground(255);
     
     int sampleRate = 44100;
-    int bufferSize = 512;
+    int bufferSize = 2048;
     int outChannels = 0;
     int inChannels = 2;
     int ticksPerBuffer = bufferSize/64;
@@ -13,9 +13,25 @@ void ofApp::setup(){
     buffer_1 =  new float[bufferSize];
     buffer_2 =  new float[bufferSize];
     for(int i = 0; i < bufferSize; i++) { buffer_1[i]=buffer_2[i]= 0;}
-    audioAnalyzer1.setup(512, 44100);
-    audioAnalyzer2.setup(512, 44100);
-    soundStream.setup(this, outChannels, inChannels, sampleRate, bufferSize, ticksPerBuffer);
+    audioAnalyzer1.setup(bufferSize, sampleRate);
+    audioAnalyzer2.setup(bufferSize, sampleRate);
+    
+    audioAnalyzer1.setOnsetTreshold(0.50);
+    audioAnalyzer1.setOnsetAlpha(3.0);
+    
+    ofSoundStreamSettings settings;
+    settings.setInListener(this);
+    settings.numOutputChannels = outChannels;
+    settings.numInputChannels = inChannels;
+    settings.sampleRate = sampleRate;
+    settings.bufferSize = bufferSize;
+    settings.numBuffers = ticksPerBuffer;
+    
+//    auto devices = soundStream.getMatchingDevices("default");
+//    if(!devices.empty()){
+//        settings.setInDevice(devices[0]);
+//    }
+    soundStream.setup(settings);
 }
 
 //--------------------------------------------------------------
@@ -25,7 +41,10 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    
+//    if (audioAnalyzer1.getIsOnset()) cout << "onset!"  <<endl;
     ofSetColor(ofColor::seaGreen);
+    
     float radius = 10 + 100*audioAnalyzer1.getRms();
     float xpos = ofGetWidth() *.5;
     float ypos = ofGetHeight()*.5;
@@ -33,14 +52,17 @@ void ofApp::draw(){
     ofCircle(xpos, ypos, radius);
 }
 //--------------------------------------------------------------
-void ofApp::audioIn(float * input, int bufferSize, int nChannels){
+void ofApp::audioIn(ofSoundBuffer & input){
     
-        for (int i = 0; i < bufferSize; i++){
-            buffer_1[i]	= input[i*nChannels];
-            buffer_2[i]	= input[i*nChannels+1];
-        }
-        audioAnalyzer1.analyze(buffer_1, bufferSize);
-        audioAnalyzer2.analyze(buffer_2, bufferSize);
+    int bufferSize = input.getNumFrames();
+    int nChannels = input.getNumChannels();
+    vector<float>  buffer = input.getBuffer();
+    for (int i = 0; i < input.getNumFrames(); i++){
+        buffer_1[i]	= buffer[i*nChannels];
+        buffer_2[i]	= buffer[i*nChannels+1];
+    }
+    audioAnalyzer1.analyze(buffer_1, bufferSize);
+    audioAnalyzer2.analyze(buffer_2, bufferSize);
     
 }
 //--------------------------------------------------------------

@@ -116,6 +116,8 @@ class ofxAudioAnalyzer
         Algorithm* onsetHfc;
         Algorithm* onsetComplex;
         Algorithm* onsetFlux;
+        Algorithm* beatTrackerDegara;
+        Algorithm* beatTrackerMultiFeature;
    
 
     //For storing algorithms results-----------------
@@ -134,6 +136,7 @@ class ofxAudioAnalyzer
         Real onsetHfcValue;
         Real onsetComplexValue;
         Real onsetFluxValue;
+        Real beatConfidenceMF;
 
         vector<Real> audio;
 		vector<Real> frame;
@@ -152,6 +155,9 @@ class ofxAudioAnalyzer
         vector<complex<Real> > fftValues;
         vector<Real> c2pMagValues;
         vector<Real> c2pPhaseValues;
+        vector<Real> beatTicksDegara;
+        vector<Real> beatTicksMF;
+    
 
     // Onset Evaluation---------------------
 

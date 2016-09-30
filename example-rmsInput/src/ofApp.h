@@ -21,7 +21,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-        void audioIn(float * input, int bufferSize, int nChannels);
+        void audioIn(ofSoundBuffer & input);
     
         ofSoundStream soundStream;
         ofxAudioAnalyzer audioAnalyzer1, audioAnalyzer2;
