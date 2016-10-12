@@ -5,7 +5,7 @@ void ofApp::setup(){
     ofBackground(255);
     
     int sampleRate = 44100;
-    int bufferSize = 2048;
+    int bufferSize = sampleRate * 30.0;
     int outChannels = 0;
     int inChannels = 2;
     int ticksPerBuffer = bufferSize/64;
@@ -27,22 +27,28 @@ void ofApp::setup(){
     settings.bufferSize = bufferSize;
     settings.numBuffers = ticksPerBuffer;
     
-//    auto devices = soundStream.getMatchingDevices("default");
+//    soundStream.printDeviceList();
+//    auto devices = soundStream.getDeviceList();
 //    if(!devices.empty()){
-//        settings.setInDevice(devices[0]);
+//        cout << devices[2].name << endl;
+//        settings.setInDevice(devices[2]);
 //    }
     soundStream.setup(settings);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    // BeatTracking
+    float bt = 0.0;
+    for (int i=0; i < audioAnalyzer1.getBeatTicks().size();i++){
+        float t = audioAnalyzer1.getBeatTicks()[i];
+        if (bt != 0.0) ofLog() << "beat interval: " << (t - bt);
+        bt = t;
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-//    if (audioAnalyzer1.getIsOnset()) cout << "onset!"  <<endl;
     ofSetColor(ofColor::seaGreen);
     
     float radius = 10 + 100*audioAnalyzer1.getRms();
@@ -51,6 +57,7 @@ void ofApp::draw(){
     ypos -= ofGetHeight()*.5 * audioAnalyzer2.getRms();
     ofCircle(xpos, ypos, radius);
 }
+
 //--------------------------------------------------------------
 void ofApp::audioIn(ofSoundBuffer & input){
     
@@ -62,7 +69,7 @@ void ofApp::audioIn(ofSoundBuffer & input){
         buffer_2[i]	= buffer[i*nChannels+1];
     }
     audioAnalyzer1.analyze(buffer_1, bufferSize);
-    audioAnalyzer2.analyze(buffer_2, bufferSize);
+//    audioAnalyzer2.analyze(buffer_2, bufferSize);
     
 }
 //--------------------------------------------------------------

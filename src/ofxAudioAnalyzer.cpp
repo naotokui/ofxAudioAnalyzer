@@ -95,7 +95,6 @@ void ofxAudioAnalyzer::setup(int bufferSize, int sampleRate){
                                        "windowSize", 4.0/3.0);
     
         beatTrackerDegara = factory.create("BeatTrackerDegara");
-        beatTrackerMultiFeature = factory.create("BeatTrackerMultiFeature");
   
 
     ///Algorithm diagram--------------------------------------------------------
@@ -185,9 +184,7 @@ void ofxAudioAnalyzer::setup(int bufferSize, int sampleRate){
         //BeatTracker
         beatTrackerDegara->input("signal").set(audioBuffer);
         beatTrackerDegara->output("ticks").set(beatTicksDegara);
-        beatTrackerMultiFeature->input("signal").set(audioBuffer);
-        beatTrackerMultiFeature->output("ticks").set(beatTicksMF);
-        beatTrackerMultiFeature->output("confidence").set(beatConfidenceMF);
+        beatTrackerDegara->reset();
 }
 
 //--------------------------------------------------------------
@@ -217,7 +214,6 @@ void ofxAudioAnalyzer::exit(){
     delete onsetHfc;
     delete onsetFlux;
     delete beatTrackerDegara;
-    delete beatTrackerMultiFeature;
     
     essentia::shutdown();
 
@@ -277,8 +273,8 @@ void ofxAudioAnalyzer::analyze(float * iBuffer, int bufferSize){
             inharmonicity->compute();
         }
     
-//        beatTrackerDegara->compute();
-        beatTrackerMultiFeature->compute();
+    beatTrackerDegara->reset();
+    beatTrackerDegara->compute();
 
 
     ///Cast results to FLOATS--------------------------------------
@@ -365,15 +361,6 @@ void ofxAudioAnalyzer::analyze(float * iBuffer, int bufferSize){
         if (doInharmon) inharm_f = (float) inharmValue;
         else inharm_f = 0.0;
 
-        // BeatTracking
-    for (int i=0; i < beatTicksDegara.size();i++){
-        cout << "beat ticks " << beatTicksDegara[i] << endl;
-        
-    }
-    for (int i=0; i < beatTicksMF.size();i++){
-        cout << "beat ticks MF " << beatTicksMF[i] << endl;
-    }
-    cout << "confidence " << beatConfidenceMF << endl;
 }
 //--------------------------------------------------------------
  bool ofxAudioAnalyzer::onsetEvaluation (Real iDetectHfc, Real iDetectComplex, Real iDetectFlux){

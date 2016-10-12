@@ -51,7 +51,9 @@ class ofxAudioAnalyzer
         
         void setOnsetTreshold(float val){silenceTreshold=val;}
         void setOnsetAlpha(float val){alpha=val;}
-        
+    
+        vector<Real> getBeatTicks(){ return beatTicksDegara;};
+    
         //For storing results casted to Floats ---------------------
     
         bool addHfc, addComplex, addFlux;
@@ -117,7 +119,6 @@ class ofxAudioAnalyzer
         Algorithm* onsetComplex;
         Algorithm* onsetFlux;
         Algorithm* beatTrackerDegara;
-        Algorithm* beatTrackerMultiFeature;
    
 
     //For storing algorithms results-----------------
@@ -136,7 +137,6 @@ class ofxAudioAnalyzer
         Real onsetHfcValue;
         Real onsetComplexValue;
         Real onsetFluxValue;
-        Real beatConfidenceMF;
 
         vector<Real> audio;
 		vector<Real> frame;
@@ -156,7 +156,6 @@ class ofxAudioAnalyzer
         vector<Real> c2pMagValues;
         vector<Real> c2pPhaseValues;
         vector<Real> beatTicksDegara;
-        vector<Real> beatTicksMF;
     
 
     // Onset Evaluation---------------------
